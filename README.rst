@@ -3,13 +3,13 @@ bandapi
 =======
 
 
-Add a short description here!
+Workflow for band-structure calculation of ABACUS
 
 
 Description
 ===========
 
-A longer description of your project goes here...
+Workflow for band-structure calculation of ABACUS.
 
 
 .. _pyscaffold-notes:
