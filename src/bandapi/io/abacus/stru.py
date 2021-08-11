@@ -152,9 +152,9 @@ def generate_atomic_positions_lines(stru_para_dict):
 
 if __name__ == '__main__':
     write_abacus_stru(".", {
-        "label_list": ["Si"],
-        "mass_list": ["1.000"],
-        "pseudo_file_list": ["Si.pz-vbc.UPF"],
+        "label_list": ["Si","O"],
+        "mass_list": ["1.000","1.000"],
+        "pseudo_file_list": ["Si.pz-vbc.UPF","O.pz-vbc.UPF"],
         "lattice_constant": 10.2, # Unit in Bohr, cif file unit is Angstrom!!!
         "lattice_matrix": np.array([
             [0.5, 0.5, 0.0],
@@ -162,11 +162,16 @@ if __name__ == '__main__':
             [0.0, 0.5, 0.5]
         ]),
         "coordinate_type": "Cartesian",
-        "atom_type_list": ["Si"],
-        "magnetism_list": [0.0],
-        "number_of_atoms_list": [2],
+        "atom_type_list": ["Si","O"],
+        "magnetism_list": [0.0,0],
+        "number_of_atoms_list": [2,2],
         "pos_list": [np.array([
             [0, 0, 0, 0, 0, 0],
             [0.25, 0.25, 0.25, 1, 1, 1]
-        ])]
+        ]),
+            np.array([
+                [0, 0, 0, 0, 0, 0],
+                [0.25, 0.25, 0.25, 1, 1, 1]
+            ])
+        ]
     })
