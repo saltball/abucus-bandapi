@@ -63,7 +63,7 @@ def prase_atoms2strudict(atoms: ase.atoms, potential_name="SG15"):
     atoms_counter = Counter(atoms.get_atomic_numbers())
     atom_type_list = list(ase.symbols.chemical_symbols[item] for item in list(atoms_counter.keys()))
     coordinate_type = "Cartesian"
-    label_list = np.ones_like(atom_type_list)
+    label_list = atom_type_list
     lattice_constant = atoms.cell.lengths().max()
     lattice_matrix = atoms.cell / lattice_constant
     magnetism_list = np.ones_like(atom_type_list)
@@ -124,13 +124,13 @@ def copy_pseudo_file_list(stru_info: dict, pot_name="SG15"):
 
 
 if __name__ == '__main__':
-    atoms_list = get_mat_proj_with_id("mp-1067619")
+    atoms_list = get_mat_proj_with_id("mp-24")
     atoms = atoms_list[0]
     stru_info = write_stur(atoms)
     write_input(pseudo_dir="./",
                 calculation="scf",
                 ntype=1,
-                nbands=8,
+                nbands=16,
                 basis_type="pw",
                 symmetry=0,
                 ecutwfc=50,
