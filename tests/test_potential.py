@@ -1,25 +1,24 @@
 import pathlib
-import unittest
+import pytest
 from bandapi.io.abacus.potential import AbacusPotential
 
 
-class TestPotential(unittest.TestCase):
-    def test_abacus_SG15(self):
-        assert pathlib.Path(AbacusPotential(pot_name="SG15")["C"]).exists()
+def test_abacus_SG15():
+    assert pathlib.Path(AbacusPotential(pot_name="SG15")["C"]).exists()
 
-    @unittest.skipIf(not __import__("ase"), "Don't have `ase`")
-    def test_abacus_SG15_with_ase(self):
+
+@pytest.mark.skipIf(not __import__("ase"), "Don't have `ase`")
+def test_abacus_SG15_with_ase():
+    with pytest.raises(ImportError) as e:
         pathlib.Path(AbacusPotential(pot_name="SG15")[6]).exists()
-
-    @unittest.skipIf(__import__("ase"), "Have `ase`")
-    def test_abacus_SG15_without_ase(self):
-        with self.assertRaises(ImportError):
-            pathlib.Path(AbacusPotential(pot_name="SG15")[6]).exists()
-
-    def test_abacus_SG15_not_exist(self):
-        with self.assertRaises(KeyError):
-            pathlib.Path(AbacusPotential(pot_name="SG15")["X"]).exists()
+    assert isinstance(ImportError,e.type)
 
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.mark.skipIf(__import__("ase"), "Have `ase`")
+def test_abacus_SG15_with_ase():
+    pathlib.Path(AbacusPotential(pot_name="SG15")[6]).exists()
+
+
+def test_abacus_SG15_not_exist():
+    with pytest.raises(KeyError):
+        pathlib.Path(AbacusPotential(pot_name="SG15")["X"]).exists()
