@@ -6,6 +6,7 @@
 # ALL RIGHTS ARE RESERVED UNLESS STATED.
 # ====================================== #
 import glob
+
 import pathlib
 import shutil
 from collections import Counter
@@ -223,6 +224,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
                     raise RuntimeError("I don't how to run tasks without scf results.")
                 else:  # after relax.
                     result = self.get_structure_from_scf_tasks(self.local_root / "scf" / item)
+
                 local_root = self.local_root / self.flow_conf["task_status"]
 
                 stru_info = write_stur(result, local_root, item, potential_name=self.task_setup["potential_name"])
@@ -255,6 +257,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
             "dr2": self.task_setup.get("dr2", 1.0e-7),
             # "nstep": 1,
             # "out_charge": 1
+
         }
 
     def get_relax_kpt_args(self, atoms, stru_info):
@@ -374,6 +377,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
             for point in item:
                 path_lines.append(sp[point])
                 num_lines.append(range)
+
             num_lines[-1] = 1
         path_lines = np.array(path_lines)
         num_lines = np.array(num_lines)
@@ -383,11 +387,13 @@ class AbacusFlowFromMatProj(AbacusFlow):
     def run_end(self):
         local_origin_root = self.local_root / self.flow_conf["task_status"]
         if self.flow_conf["task_status"] == "relax" and self.task_setup["scf"]: # catch task_status and task_setup to choose running.
+
             # local_new_root = self.local_root / self.flow_conf["task_status"]
             # pass
             self.flow_conf["task_status"] = "scf"
             self.flow_conf["task_status_type"] = "ongoing"
         elif self.flow_conf["task_status"] == "scf" and self.task_setup["band"]:
+
             local_new_root = self.local_root / "band"
             for item in self.task_content:
                 filelist = glob.glob((local_origin_root / item / "OUT.ABACUS/SPIN*_CHG").as_posix()) # not use pathlib.glob because that's a generator, but here need judge its exitence.
@@ -407,6 +413,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
     def submit_loop_condition(self):
         if self.flow_conf["task_status_type"] == "ongoing":
             self.flow_conf["task_status_type"] = "done"
+
             return True
         else:
             return False

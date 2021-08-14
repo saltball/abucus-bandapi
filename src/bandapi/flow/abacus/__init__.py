@@ -91,6 +91,7 @@ class AbacusFlow(AbacusFlowCore):
             `ecutwfc` (ecutwfc, default: 50)
             `kpathrange` (default:20)
 
+
             and switch for: relax, scf, band
         :param dispatch_work_base:
         :param use_dpdispatcher:
