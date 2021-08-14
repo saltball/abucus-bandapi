@@ -51,7 +51,12 @@ class MatProjWrapper:
             url = MatProjAPIUrl.format(id, self.API_KEY)
             url = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 3578.98 Safari/537.36'})
             result = urllib.request.urlopen(url)
-            return self._result_wrapper(result, _pymatgen=False)
+            result=self._result_wrapper(result, _pymatgen=False)
+            try:
+                result[0]
+                return result
+            except KeyError:
+                raise RuntimeError(f"Material Project ID '{id}' response nothing.")
 
     def _result_wrapper(self, result, _pymatgen) -> List[ase.atoms.Atoms]:
         """

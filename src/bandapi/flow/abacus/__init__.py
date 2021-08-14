@@ -88,7 +88,7 @@ class AbacusFlow(AbacusFlowCore):
             `dr2` (default:`1e-07`, for all tasks.)
             `kpointrange` (default:`5`, for k-point density of relax task.)
             `abacus_path` (no default, absolute path to abacus of your server.)
-            `ecutwfc` (ecutwfc, default: 50)
+            `ecutwfc` (ecutwfc, default: 80)
             `kpathrange` (default:20)
 
 

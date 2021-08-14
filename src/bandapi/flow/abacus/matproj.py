@@ -125,7 +125,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
                     self.flow_conf["task_status"] = "band"
                 else:
                     raise NotImplementedError("I don't know what to do when setting none of relax, scf and scf.")
-            stru_info_list = self.convert(task_content)
+            stru_info_list = self.makeup(task_content)
             return self.task_prepare(task_content, stru_info_list)
         else:
             raise NotImplementedError
@@ -176,9 +176,9 @@ class AbacusFlowFromMatProj(AbacusFlow):
             raise NotImplementedError
         return task_list
 
-    def convert(self, task_content):
+    def makeup(self, task_content):
         """
-        download() function will makeup all directories with INPUT, KPT and STRU files.
+        makeup() function will makeup all directories with INPUT, KPT and STRU files.
         :param task_content:
         :return:
         """
@@ -202,7 +202,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
         elif self.flow_conf["task_status"] == "scf":
             for idx, item in enumerate(task_content):
                 if not self.task_setup["relax"]:  # not relax but need data. directly scf.
-                    result = self.matprojwrapper.get_structure_by_id(mat_proj_id)
+                    result = self.matprojwrapper.get_structure_by_id(item)
                     assert len(result) == 1, "Got not only one structure, it's undefined behavior."
                     result: ase.Atoms = result[0]
                 else:  # after relax.
@@ -253,7 +253,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
             # "nbands": 8,
             "basis_type": "pw",
             "symmetry": 0,
-            "ecutwfc": self.task_setup.get("ecutwfc", 50),
+            "ecutwfc": self.task_setup.get("ecutwfc", 80),
             "dr2": self.task_setup.get("dr2", 1.0e-7),
             # "nstep": 1,
             # "out_charge": 1
@@ -280,10 +280,11 @@ class AbacusFlowFromMatProj(AbacusFlow):
         :param range: int
         :return:
         """
-
+        odd_flag = range%2
         result = np.around(1 / abc / min(1 / abc) * range)
+        mask = result%2==odd_flag
         shift = np.zeros_like(result)
-        return np.concatenate([result, shift], axis=-1)
+        return np.concatenate([result+mask, shift], axis=-1)
 
     #### For scf job
 
@@ -307,7 +308,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
             # "nbands": 8,
             "basis_type": "pw",
             "symmetry": 0,
-            "ecutwfc": self.task_setup.get("ecutwfc", 50),
+            "ecutwfc": self.task_setup.get("ecutwfc", 80),
             "dr2": self.task_setup.get("dr2", 1.0e-7),
             # "nstep": 1,
             "out_charge": 1
@@ -341,7 +342,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
             # "nbands": 8,
             "basis_type": "pw",
             "symmetry": 0,
-            "ecutwfc": self.task_setup.get("ecutwfc", 50),
+            "ecutwfc": self.task_setup.get("ecutwfc", 80),
             "dr2": self.task_setup.get("dr2", 1.0e-7),
             # "nstep": 1,
             "out_band": 1,
