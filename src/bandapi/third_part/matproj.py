@@ -32,6 +32,18 @@ class MatProjWrapper:
         else:
             self.USE_PYMATGEN = False
 
+    def test_connet(self):
+        if self.USE_PYMATGEN:
+            result = self.mprester.api_check()
+        else:
+            url = "https://www.materialsproject.org/rest/v1/api_check?API_KEY={}".format(self.API_KEY)
+            url = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 3578.98 Safari/537.36'})
+            result = urllib.request.urlopen(url)
+            import json
+            result = json.load(result)
+        return result["valid_response"]
+
+
     def get_structure_by_id(self, id):
         if self.USE_PYMATGEN:
             return self._result_wrapper(self.mprester.get_structure_by_material_id(id), _pymatgen=True)
