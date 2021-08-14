@@ -47,7 +47,7 @@ class AbacusFlowCore(Flow):
         self.dispatch_work_base = self.flow_conf["dispatch_work_base"]
         if self._use_dpdispatcher:
             from bandapi.dispatcher.dpdispatcher import Submission
-            self.submission: dpdispatcher.Submission = Submission(
+            self.submission: bandapi.dispatcher.dpdispatcher.Submission = Submission(
                 work_base=self.dispatch_work_base,
                 machine=self.machine,
                 resources=self.resource,
@@ -59,7 +59,7 @@ class AbacusFlowCore(Flow):
             raise NotImplementedError("Undefined behavior when `_use_dpdispatcher` == False.")
 
     def dispatch(self):
-        self.submission.run_submission()
+        self.submission.run_submission(period=5)
 
     def run_end(self):
         pass
@@ -89,6 +89,8 @@ class AbacusFlow(AbacusFlowCore):
             `kpointrange` (default:`5`, for k-point density of relax task.)
             `abacus_path` (no default, absolute path to abacus of your server.)
             `ecutwfc` (ecutwfc, default: 50)
+            `kpathrange` (default:20)
+
 
             and switch for: relax, scf, band
         :param dispatch_work_base:

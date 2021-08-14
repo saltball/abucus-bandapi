@@ -37,7 +37,7 @@ resource = {
 }
 
 taskid = [
-    "mp-47",
+    # "mp-47",
     "mp-66",
     # "mp-149"
 ]
