@@ -5,7 +5,7 @@
 # @File    : matproj.py
 # ALL RIGHTS ARE RESERVED UNLESS STATED.
 # ====================================== #
-
+import glob
 import pathlib
 import shutil
 from collections import Counter
@@ -222,7 +222,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
                 if not self.task_setup["scf"]:  # not relax but need data. directly band.
                     raise RuntimeError("I don't how to run tasks without scf results.")
                 else:  # after relax.
-                    result = self.get_structure_from_scf_tasks(self.local_root / "scf")
+                    result = self.get_structure_from_scf_tasks(self.local_root / "scf" / item)
                 local_root = self.local_root / self.flow_conf["task_status"]
 
                 stru_info = write_stur(result, local_root, item, potential_name=self.task_setup["potential_name"])
@@ -287,6 +287,9 @@ class AbacusFlowFromMatProj(AbacusFlow):
     def get_structure_from_relax_tasks(self, relax_path: pathlib.Path):
         return read_stru(relax_path / "OUT.ABACUS/STRU_ION_D")
 
+    def get_structure_from_scf_tasks(self, scf_path: pathlib.Path):
+        return read_stru(scf_path / "STRU")
+
     def get_scf_input_args(self, atoms, stru_info):
         """
 
@@ -349,15 +352,16 @@ class AbacusFlowFromMatProj(AbacusFlow):
         :param stru_info: info dictionary from `write_stur`
         :return:
         """
+        kpatharray = self.get_band_kpt_array(atoms, self.task_setup.get("kpathrange", 20))
         return {
-            "number_of_kpt": 6,
+            "number_of_kpt": kpatharray.shape[0],
             "mode": "Line",
-            "content": self.get_relax_kpt_array(atoms, self.task_setup.get("kpointrange", 5))
+            "content": kpatharray.copy()
         }
 
-    def get_band_kpt_array(self, atoms, range=5):
+    def get_band_kpt_array(self, atoms, range=20):
         """
-        More range, more kpoints. Change here if anyone want other methods to generate k-points.
+        More range, more kpoints. Change here if anyone wants other methods to generate k-points.
         :param atoms:
         :param range: int
         :return:
@@ -369,7 +373,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
         for item in path:
             for point in item:
                 path_lines.append(sp[point])
-                num_lines.append(20)
+                num_lines.append(range)
             num_lines[-1] = 1
         path_lines = np.array(path_lines)
         num_lines = np.array(num_lines)
@@ -378,23 +382,31 @@ class AbacusFlowFromMatProj(AbacusFlow):
 
     def run_end(self):
         local_origin_root = self.local_root / self.flow_conf["task_status"]
-        if self.flow_conf["task_status"] == "relax" and self.task_setup["scf"]:
+        if self.flow_conf["task_status"] == "relax" and self.task_setup["scf"]: # catch task_status and task_setup to choose running.
             # local_new_root = self.local_root / self.flow_conf["task_status"]
             # pass
             self.flow_conf["task_status"] = "scf"
             self.flow_conf["task_status_type"] = "ongoing"
         elif self.flow_conf["task_status"] == "scf" and self.task_setup["band"]:
-            local_new_root = self.local_root / self.flow_conf["task_status"]
+            local_new_root = self.local_root / "band"
             for item in self.task_content:
-                shutil.copy(local_origin_root / item / "OUT.ABACUS/SPIN*_CHGCAR", local_new_root / item / "OUT.ABACUS/")
+                filelist = glob.glob((local_origin_root / item / "OUT.ABACUS/SPIN*_CHG").as_posix()) # not use pathlib.glob because that's a generator, but here need judge its exitence.
+                assert filelist is not None, "No CHG result in scf calculation."
+                (local_new_root / item / "OUT.ABACUS").mkdir(parents=True,exist_ok=True)
+                for file in filelist: # Change here in case of `ABACUS` change the name...
+                    file=pathlib.Path(file)
+                    shutil.copy(file, local_new_root / item / "OUT.ABACUS"/ file.name)
             self.flow_conf["task_status"] = "band"
             self.flow_conf["task_status_type"] = "ongoing"
+        elif self.flow_conf["task_status"] == "band" and self.flow_conf["task_status_type"] == "done":
+            return
         else:
             raise NotImplementedError("Undefined behavior in `run_end`.")
         self.task_list = None
 
     def submit_loop_condition(self):
         if self.flow_conf["task_status_type"] == "ongoing":
+            self.flow_conf["task_status_type"] = "done"
             return True
         else:
             return False

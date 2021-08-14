@@ -101,8 +101,8 @@ def generate_kpt_manually(kpt_para_dict):
                 raise ValueError(f"kpt_mode_content[\"content\"] is list and has wrong shape: {len(lat_vec)} != ele_num of {atom}:{kpt_num}.")
         elif isinstance(kpt_mode_content, np.ndarray):
             assert kpt_mode_content.shape == (kpt_num, 4), f"kpt_mode_content in ABACUS KPT file need 4 numbers and {kpt_num} lines when using method {kpt_para_dict['mode']}. Got {kpt_mode_content.shape}."
-            for content_line in kpt_mode_content:
-                lines += f"{int(content_line[0])} {int(content_line[1])} {int(content_line[2])} {int(content_line[3])}\n"
+            for line_idx in range(kpt_num):
+                lines += f"{kpt_mode_content[line_idx][0]} {kpt_mode_content[line_idx][1]} {kpt_mode_content[line_idx][2]} {int(kpt_mode_content[line_idx][3])}\n"
         else:
             raise TypeError(f"Except list or np.ndarray for kpt_mode_content, got {type(kpt_mode_content)} instead.")
     else:
