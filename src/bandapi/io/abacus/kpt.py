@@ -59,7 +59,7 @@ def generate_kpt_with_MP(kpt_para_dict):
     elif kpt_para_dict["mode"] == "MP":
         lines += "MP\n"
     else:
-        KeyError(f"Invalid kpt method Key for Monkhorst-Pack method in ABACUS: {key}. It should be `Gamma' or `MP'")
+        KeyError(f"Invalid kpt method Key for Monkhorst-Pack method in ABACUS: {kpt_para_dict['mode']}. It should be `Gamma' or `MP'")
 
     kpt_mode_content = kpt_para_dict["content"]
     if isinstance(kpt_mode_content, list):
@@ -87,7 +87,7 @@ def generate_kpt_manually(kpt_para_dict):
         lines += "Line_Cartesian\n"
         calculate_band = True
     else:
-        KeyError(f"Invalid kpt method Key for manual method in ABACUS: {key}. It should be `Direct' and `Cartesian' for explicitly k-point, or 'Line' and 'Line_Cartesian' for band-structure calculations")
+        KeyError(f"Invalid kpt method Key for manual method in ABACUS: {kpt_para_dict['mode']}. It should be `Direct' and `Cartesian' for explicitly k-point, or 'Line' and 'Line_Cartesian' for band-structure calculations")
 
     kpt_mode_content = kpt_para_dict["content"]
     kpt_num = int(kpt_para_dict["number_of_kpt"])
