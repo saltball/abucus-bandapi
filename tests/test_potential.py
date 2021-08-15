@@ -7,14 +7,14 @@ def test_abacus_SG15():
     assert pathlib.Path(AbacusPotential(pot_name="SG15")["C"]).exists()
 
 
-@pytest.mark.skipIf(not __import__("ase"), "Don't have `ase`")
+@pytest.mark.skipif(not __import__("ase"), "Don't have `ase`")
 def test_abacus_SG15_with_ase():
     with pytest.raises(ImportError) as e:
         pathlib.Path(AbacusPotential(pot_name="SG15")[6]).exists()
     assert isinstance(ImportError,e.type)
 
 
-@pytest.mark.skipIf(__import__("ase"), "Have `ase`")
+@pytest.mark.skipif(__import__("ase"), "Have `ase`")
 def test_abacus_SG15_with_ase():
     pathlib.Path(AbacusPotential(pot_name="SG15")[6]).exists()
 
