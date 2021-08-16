@@ -8,6 +8,7 @@
 import abc
 
 import dpdispatcher
+from bandapi.flow.state import FlowStateControl
 
 Default_Machine = {
     "batch_type": "Shell",
@@ -32,7 +33,7 @@ class Flow():
         """
         Tasks you defined will run as following:
         - prepare
-        - run (and _dispatch)
+        - gather_submission (and dispatch)
         - run_end
         - (check, e.g. add new task dynamically)
         """
@@ -50,41 +51,63 @@ class Flow():
 
         else:
             NotImplementedError
-        self.flow_conf = kwargs
 
-    def configure(self, **kwarg):
-        """
-        call configure any time, change all flow state following.
-        """
-        self.flow_conf.update(kwarg)
+        self._flow_state_controler=None
+
+    @property
+    def flow_state_controler(self):
+        if self._flow_state_controler:
+            return self._flow_state_controler
+        else:
+            raise NotImplementedError
 
     @abc.abstractmethod
     def prepare(self):
+        """
+        Setup a task list for flow.
+
+        :return:
+        """
+        self.flow_state_controler.prepare()
+
+    @abc.abstractmethod
+    def gather_submission(self):
+        """
+        Gather the task and make a submission.
+
+        :return:
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def run(self):
-        raise NotImplementedError
+    def run_dispatch(self):
+        """
+        Run the submission with dispatch.
 
-    @abc.abstractmethod
-    def dispatch(self):
+        :return:
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def run_end(self):
-        raise NotImplementedError
+        """
+        Do something after dispatch.
+
+        :return:
+        """
+        self.flow_state_controler.run_end()
 
     def submit(self, always_loop=False):
         """
         Submit task, and it will run as:
         - prepare
-        - run (and dispatch)
+        - gather_submission (and run_dispatch)
         - run_end
         - (check)
             - check by using `submit_loop_condition`
         - if `submit_loop_condition` return True, loop start:
             - prepare
-            - run (and dispatch)
+            - gather_submission (and run_dispatch)
             - run_end
             - (check whether to break, nor judge with `submit_loop_condition`)
         - else end
@@ -92,27 +115,29 @@ class Flow():
         :return:
         """
         self.prepare()
-        self.run()
-        self.dispatch()
+        self.gather_submission()
+        self.run_dispatch()
         self.run_end()
-        while self.submit_loop_condition() or always_loop:
+        while self.submit_loop_condition or always_loop:
             self.prepare()
-            self.run()
-            self.dispatch()
+            self.gather_submission()
+            self.run_dispatch()
             self.run_end()
-            if self.submit_break_condition():
+            if self.submit_break_condition:
                 break
 
+    @property
     def submit_loop_condition(self):
         """
         Check condition after submit run one epoch.
         :return:
         """
-        return False
+        return self.flow_state_controler.submit_loop_condition
 
+    @property
     def submit_break_condition(self):
         """
         Check condition after submit loop once and further.
         :return:
         """
-        return False
+        return self.flow_state_controler.submit_break_condition
