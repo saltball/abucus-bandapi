@@ -41,6 +41,7 @@ class AbacusFlowFromMatProj(AbacusFlow):
         """
         self.matprojwrapper = MatProjWrapper(API_KEY=API_KEY)
         assert self.matprojwrapper.test_connet()
+
         task_content = self.contentgenerate(task_content)
         super(AbacusFlowFromMatProj, self).__init__(
             machine=machine,
