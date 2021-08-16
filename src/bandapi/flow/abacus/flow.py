@@ -52,6 +52,6 @@ class AbacusFlow(Flow):
 
     def run_dispatch(self):
         if self.flow_state_controler._state._need_submission:
-            self.submission.run_submission(period=self.flow_state_controler.get_state_settings("submission_check_period", 5))
+            self.submission.run_submission(period=self.flow_state_controler.get_state_settings("submission_check_period", 5),clean=self.flow_state_controler.get_state_settings("clean",True))
         else:
             pass
