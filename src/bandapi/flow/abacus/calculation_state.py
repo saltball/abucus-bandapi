@@ -210,6 +210,7 @@ class AbacusRelaxState(AbacusScfState, AbacusState):
             "symmetry": 0,
             "ecutwfc": self.get_state_settings("ecutwfc", default_settings["ecutwfc"]),
             "dr2": self.get_state_settings("dr2", default_settings["dr2"]),
+            "nstep":self.get_state_settings("nstep", default_settings["nstep"]),
         }
 
     def run_end(self, next_state: str):

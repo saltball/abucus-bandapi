@@ -121,9 +121,11 @@ class FlowStateControl:
         self.task_content = task_content
         self._state_init()
 
-    def _state_init(self, **kwargs):
+    def _state_init(self,task_content=None, **kwargs):
+        if not task_content:
+            task_content=self.task_content
         flow = self.flow_list[self.flow_list_flag]
-        self._state = self._flow_state_class._subclass_dict().get(flow)(self.task_content, **kwargs, **self.flow_settings)
+        self._state = self._flow_state_class._subclass_dict().get(flow)(task_content, **kwargs, **self.flow_settings)
 
     @property
     def state(self):
@@ -151,7 +153,7 @@ class FlowStateControl:
                 # TODO:fix the logical of loop condition
                 self._submit_loop_condition = 1
                 self._submit_break_condition = 0
-                self._state_init(submit_loop_condition=self._submit_loop_condition, submit_break_condition=self._submit_break_condition)
+                self._state_init(task_content=self._state.task_content,submit_loop_condition=self._submit_loop_condition, submit_break_condition=self._submit_break_condition)
             else:  # no run_end stop loop
                 self._submit_loop_condition = 0
                 self._submit_break_condition = 0

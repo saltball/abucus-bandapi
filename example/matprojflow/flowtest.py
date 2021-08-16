@@ -33,7 +33,7 @@ machine = {
 resource = {
     "number_node": 1,
     "cpu_per_node": CPU_NUM,
-    "group_size": 5
+    "group_size": 500
 }
 
 taskid = [
