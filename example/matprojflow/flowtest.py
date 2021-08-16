@@ -33,31 +33,42 @@ machine = {
 resource = {
     "number_node": 1,
     "cpu_per_node": CPU_NUM,
-    "group_size": 5
+    "group_size": 500
 }
 
-taskid = [
-    # "mp-47",
-    "mp-66",
-    # "mp-149"
-]
+taskPath = pathlib.Path(r"taskid.txt")  # no space line.
+if taskPath.exists():
+    taskid = taskPath.read_text().split("\n")
+else:
+    raise FileNotFoundError
+
+# taskid = [        # Uncomment this to override taskid
+#     "mp-47",
+#     "mp-66",
+#     "mp-149"
+# ]
+
 
 flow = AbacusFlowFromMatProj(
     API_KEY=API_KEY,
     machine=machine,
     resource=resource,
-    task_type="matprojid",
+    task_flow_list=[
+        # "scf-charge",
+        # "nscf-band",
+        "band-data"
+    ],
     task_content=taskid,
     task_setup={
         "potential_name": "SG15",
-        "dr2": 1.0e-6,
-        "kpointrange": 3,
-        "ecutwfc": 50,
-        "abacus_path": ABACUS_COMMAND,
-
-        "relax": 1,
-        "scf": 1,
-        "band": 1
+        "dr2": 1.0e-7,
+        "kpointscope": 5,
+        "ecutwfc": 80,
+        "remote_command": ABACUS_COMMAND,
+        "kpathrange": 20,
+        "flow_work_root": LOCAL_ROOT,
+        "submission_check_period": 1,
+        "nstep": 10
     }
 )
 
