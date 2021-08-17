@@ -54,9 +54,9 @@ flow = AbacusFlowFromMatProj(
     machine=machine,
     resource=resource,
     task_flow_list=[
-        # "scf-charge",
-        # "nscf-band",
-        "band-data"
+        "scf-charge",
+        "nscf-band",
+        # "band-data"
     ],
     task_content=taskid,
     task_setup={

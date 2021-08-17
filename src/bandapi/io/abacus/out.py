@@ -105,6 +105,7 @@ def read_band_in_log(log_file, atoms=None, _nspin=1, outputfile=None):
     assert nband == np.around(nband)
     nband = int(nband)
     # split
+    print(kpath)
     kpathArray = list([item.split()[1:4] for item in kpath])
     bandArray = list([item.split()[_nspin] for item in bandValue])
 

@@ -10,9 +10,11 @@ import glob
 import shutil
 from typing import List
 
+from ase.dft.kpoints import BandPath
+from ase.spectrum.band_structure import BandStructure
 from bandapi.dispatcher.dpdispatcher import Task
 from bandapi.flow.abacus.calculation_state import AbacusBandState
-from bandapi.io.abacus.out import read_fermi_energy_from_log, read_band_in_log, BandStructure, BandPath
+from bandapi.io.abacus.out import read_fermi_energy_from_log, read_band_in_log
 
 
 class AbacusBandDataState(AbacusBandState):
