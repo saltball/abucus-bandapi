@@ -9,6 +9,9 @@ import abc
 
 import dpdispatcher
 from bandapi.flow.state import FlowStateControl
+from bandapi.flow.flowlog import Logger
+
+logger=Logger(__name__)
 
 Default_Machine = {
     "batch_type": "Shell",
@@ -114,16 +117,23 @@ class Flow():
         :param always_loop:
         :return:
         """
+        thisstate = self.flow_state_controler.flow_list[self.flow_state_controler.flow_list_flag]
+        logger.info(f"Working submit on [state]: {thisstate}, [task]: {self.flow_state_controler.task_content}")
         self.prepare()
         self.gather_submission()
         self.run_dispatch()
         self.run_end()
+        logger.info(f"Submission done of [state]: {thisstate}, [task]: {self.flow_state_controler.task_content}")
         while self.submit_loop_condition or always_loop:
+            thisstate=self.flow_state_controler.flow_list[self.flow_state_controler.flow_list_flag]
+            logger.info(f"Working submit on [state]: {thisstate}, [task]: {self.flow_state_controler.task_content}")
             self.prepare()
             self.gather_submission()
             self.run_dispatch()
             self.run_end()
+            logger.info(f"Submission done of {thisstate}.")
             if self.submit_break_condition:
+                logger.info(f"Submission break condition. [state]: {thisstate}.")
                 break
 
     @property

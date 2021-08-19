@@ -37,14 +37,15 @@ class AbacusFlow(Flow):
             dispatch_work_base = self.flow_state_controler.get_state_settings("dispatch_work_base", ".")
             if self._use_dpdispatcher:
                 from bandapi.dispatcher.dpdispatcher import Submission
-                self.submission: bandapi.dispatcher.dpdispatcher.Submission = Submission(
-                    work_base=dispatch_work_base,
-                    machine=self.machine,
-                    resources=self.resource,
-                    task_list=self.flow_state_controler._state.task_list,
-                    forward_common_files=[],
-                    backward_common_files=[]
-                )
+                if self.flow_state_controler._state.task_list:
+                    self.submission: bandapi.dispatcher.dpdispatcher.Submission = Submission(
+                        work_base=dispatch_work_base,
+                        machine=self.machine,
+                        resources=self.resource,
+                        task_list=self.flow_state_controler._state.task_list,
+                        forward_common_files=[],
+                        backward_common_files=[]
+                    )
             else:
                 raise NotImplementedError("Undefined behavior when `_use_dpdispatcher` == False.")
         else:
@@ -52,6 +53,7 @@ class AbacusFlow(Flow):
 
     def run_dispatch(self):
         if self.flow_state_controler._state._need_submission:
-            self.submission.run_submission(period=self.flow_state_controler.get_state_settings("submission_check_period", 5),clean=self.flow_state_controler.get_state_settings("clean",True))
+            if hasattr(self,"submission"):
+                self.submission.run_submission(period=self.flow_state_controler.get_state_settings("submission_check_period", 5),clean=self.flow_state_controler.get_state_settings("clean",True))
         else:
             pass

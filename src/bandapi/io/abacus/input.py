@@ -528,5 +528,6 @@ def write_abacus_input(
             print(BlockComments[block], file=f)
             for key in AbacusInputKeyDict[block]:
                 if key in all_input_keys:
-                    print(f"{key: <30}{input_para_dict[key]}", file=f)
+                    if input_para_dict[key] is not None:
+                        print(f"{key: <30}{input_para_dict[key]}", file=f)
 

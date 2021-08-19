@@ -9,9 +9,11 @@
 default_settings = {
     "ecutwfc": 80,
     "dr2": 1.0e-7,
-    "kpointscope": 3,
+    "kpointscope": 5,
     "kpathscope": 20,
-    "nstep": 20
+    "nstep": 20,
+    "nbands": None,
+    "kpointfix": False
 }
 
 import pathlib
@@ -19,7 +21,7 @@ import pathlib
 import ase.symbols
 from ase.atoms import Atoms
 from bandapi.flow.abacus import default_settings
-from bandapi.flow.abacus.utils import write_stur
+from bandapi.flow.abacus.utils import write_stur,write_abacus_input,write_abacus_kpt
 from bandapi.flow.state import FlowState
 
 

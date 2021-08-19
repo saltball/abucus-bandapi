@@ -142,7 +142,7 @@ class FlowStateControl:
 
     def prepare(self):
         if self.flow_list_flag > -1:
-            self._state.flow_begin_test()
+            self.checktorun=self._state.flow_begin_test()
         self._state.bakeup(self._state.task_content)
         self._state.task_list = self._state.prepare(self._state.task_content, self._state._state_settings)
 
