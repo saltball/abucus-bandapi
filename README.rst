@@ -11,7 +11,7 @@ Description
 
 Workflow for band-structure calculation of ABACUS.
 
-Install
+Usage
 +++++++
 
 .. code-block:: bash
