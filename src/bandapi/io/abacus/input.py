@@ -6,12 +6,13 @@
 # ALL RIGHTS ARE RESERVED UNLESS STATED.
 # ====================================== #
 import pathlib
+from collections import OrderedDict
 
 # Established based on OUT.ABACUS/INPUT
 # Note: maximum of key is 30, if more, modify last line "{key: <30}"
-AbacusInputKeyDict = {
+AbacusInputKeyDict = OrderedDict({
     # Parameters (1.General)
-    "general": {
+    "general": [
         "suffix",
         "latname",
         "atom_file",
@@ -27,9 +28,9 @@ AbacusInputKeyDict = {
         "nbands_istate",
         "nche_sto",
         "symmetry",
-        "nelec"},
+        "nelec"],
     # Parameters (2.PW)
-    "pw": {
+    "pw": [
         "ecutwfc",
         "diago_cg_maxiter",
         "diago_cg_prec",
@@ -48,9 +49,9 @@ AbacusInputKeyDict = {
         "read_file_dir",
         "nx",
         "ny",
-        "nz"},
+        "nz"],
     # Parameters (3.Relaxation)
-    "relaxation": {
+    "relaxation": [
         "ks_solver",
         "niter",
         "force_set",
@@ -74,9 +75,9 @@ AbacusInputKeyDict = {
         "out_level",
         "out_dm",
         "out_descriptor",
-        "lmax_descriptor"},
+        "lmax_descriptor"],
     # Parameters (4.LCAO)
-    "lcao": {
+    "lcao": [
         "basis_type",
         "new_dm",
         "search_radius",
@@ -89,41 +90,41 @@ AbacusInputKeyDict = {
         "out_lowf",
         "bx",
         "by",
-        "bz"},
+        "bz"],
     # Parameters (5.Smearing)
-    "smearing": {
+    "smearing": [
         "smearing",
-        "sigma"},
+        "sigma"],
     # Parameters (6.Charge Mixing)
-    "charge_mixing": {
+    "charge_mixing": [
         "mixing_type",
         "mixing_beta",
         "mixing_ndim",
-        "mixing_gg0"},
+        "mixing_gg0"],
     # Parameters (7.DOS)
-    "dos": {
+    "dos": [
         "dos_emin_ev",
         "dos_emax_ev",
         "dos_edelta_ev",
-        "dos_sigma"},
+        "dos_sigma"],
     # Parameters (8.Technique)
-    "technique": {
+    "technique": [
         "gamma_only",
         "diago_proc",
         "npool",
         "mem_saver",
-        "printe"},
+        "printe"],
     # Parameters (9.SIAO)
-    "siao": {
+    "siao": [
         "selinv_npole",
         "selinv_temp",
         "selinv_gap",
         "selinv_deltae",
         "selinv_mu",
         "selinv_threshold",
-        "selinv_niter"},
+        "selinv_niter"],
     # Parameters (10.Molecular dynamics)
-    "molecular_dynamics": {
+    "molecular_dynamics": [
         "md_mdtype",
         "md_dt",
         "mnhc",
@@ -137,17 +138,17 @@ AbacusInputKeyDict = {
         "md_ediff",
         "md_ediffg",
         "NVT_tau",
-        "NVT_control"},
+        "NVT_control"],
     # Parameters (11.Efield)
-    "efield": {
+    "efield": [
         "efield",
         "edir",
         "emaxpos",
         "eopreg",
         "eamp",
-        "eamp_v"},
+        "eamp_v"],
     # Parameters (12.Test)
-    "test": {
+    "test": [
         "out_alllog",
         "nurse",
         "colour",
@@ -155,14 +156,14 @@ AbacusInputKeyDict = {
         "vl_in_h",
         "vnl_in_h",
         "test_force",
-        "test_stress"},
+        "test_stress"],
     # Parameters (13.Other Methods)
-    "other_methods": {
+    "other_methods": [
         "mlwf_flag",
         "opt_epsilon2",
-        "opt_nbands"},
+        "opt_nbands"],
     # Parameters (14.VdW Correction)
-    "vdw_correction": {
+    "vdw_correction": [
         "vdw_method",
         "vdw_s6",
         "vdw_s8",
@@ -179,9 +180,9 @@ AbacusInputKeyDict = {
         "vdw_radius_unit",
         "vdw_cn_thr",
         "vdw_cn_thr_unit",
-        "vdw_period"},
+        "vdw_period"],
     # Parameters (15.spectrum)
-    "spectrum": {
+    "spectrum": [
         "spectral_type",
         "spectral_method",
         "kernel_type",
@@ -211,9 +212,9 @@ AbacusInputKeyDict = {
         "metalcalc",
         "eps_degauss",
         "noncolin",
-        "lspinorb"},
+        "lspinorb"],
     # Parameters (17.exx)
-    "exx": {
+    "exx": [
         "exx_hybrid_type",
         "exx_hybrid_alpha",
         "exx_hse_omega",
@@ -231,9 +232,9 @@ AbacusInputKeyDict = {
         "exx_distribute_type",
         "exx_opt_orb_lmax",
         "exx_opt_orb_ecut",
-        "exx_opt_orb_tolerenc"},
+        "exx_opt_orb_tolerenc"],
     # Parameters (17.tddft)
-    "tddft": {
+    "tddft": [
         "td_dr2",
         "td_dt",
         "td_force_dt",
@@ -245,16 +246,16 @@ AbacusInputKeyDict = {
         "td_timescale",
         "td_vexttype",
         "td_vextout",
-        "td_dipoleout"},
+        "td_dipoleout"],
     # Parameters (18.berry_wannier)
-    "berry_wannier": {
+    "berry_wannier": [
         "berry_phase",
         "gdir",
         "towannier90",
         "nnkpfile",
-        "wannier_spin"},
-}
-BlockComments = {
+        "wannier_spin"],
+})
+BlockComments = OrderedDict({
     'general': '#Parameters (1.General)',
     'pw': '#Parameters (2.PW)',
     'relaxation': '#Parameters (3.Relaxation)',
@@ -273,8 +274,8 @@ BlockComments = {
     'exx': '#Parameters (17.exx)',
     'tddft': '#Parameters (17.tddft)',
     'berry_wannier': '#Parameters (18.berry_wannier)',
-}
-AbacusInputBlock = {
+})
+AbacusInputBlock = OrderedDict({
     # Parameters (1.General)
     'latname': 'general',
     'nbands_istate': 'general',
@@ -500,26 +501,33 @@ AbacusInputBlock = {
     'gdir': 'berry_wannier',
     'nnkpfile': 'berry_wannier',
     'towannier90': 'berry_wannier'
-}
+})
 
 
 def write_abacus_input(
         task_root: str,
-        input_para_dict: dict
+        input_para_dict: dict,
+        input_name="INPUT"
 ):
+    assert input_name=="INPUT"
     all_input_keys = input_para_dict.keys()
-    input_blocks = set()
+    input_blocks = list()
     for key in all_input_keys:
         try:
-            input_blocks.add(AbacusInputBlock[key])
+            input_blocks.append(AbacusInputBlock[key])
         except KeyError:
             raise KeyError(f"Invalid Input Key for ABACUS: {key}")
+    sortkey=input_blocks.index
+    input_blocks_new = list(set(input_blocks))
+    input_blocks_new.sort(key=list(BlockComments.keys()).index)
+    input_blocks=input_blocks_new
 
-    with open(pathlib.Path(task_root) / "INPUT", "w") as f:
+    with open(pathlib.Path(task_root) / input_name, "w") as f:
         print("INPUT_PARAMETERS", file=f)
         for block in input_blocks:
             print(BlockComments[block], file=f)
             for key in AbacusInputKeyDict[block]:
                 if key in all_input_keys:
-                    print(f"{key: <30}{input_para_dict[key]}", file=f)
+                    if input_para_dict[key] is not None:
+                        print(f"{key: <30}{input_para_dict[key]}", file=f)
 

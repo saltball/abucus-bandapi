@@ -5,9 +5,11 @@
 # @File    : kpt.py
 # ALL RIGHTS ARE RESERVED UNLESS STATED.
 # ====================================== #
-
 import pathlib
-AbacusKPTKeyDict={
+
+import numpy as np
+
+AbacusKPTKeyDict = {
     "K_POINTS": {
         "number_of_kpt",
     },
@@ -57,7 +59,7 @@ def generate_kpt_with_MP(kpt_para_dict):
     elif kpt_para_dict["mode"] == "MP":
         lines += "MP\n"
     else:
-        KeyError(f"Invalid kpt method Key for Monkhorst-Pack method in ABACUS: {key}. It should be `Gamma' or `MP'")
+        KeyError(f"Invalid kpt method Key for Monkhorst-Pack method in ABACUS: {kpt_para_dict['mode']}. It should be `Gamma' or `MP'")
 
     kpt_mode_content = kpt_para_dict["content"]
     if isinstance(kpt_mode_content, list):
@@ -68,9 +70,10 @@ def generate_kpt_with_MP(kpt_para_dict):
         lines += f"{int(kpt_mode_content[0])} {int(kpt_mode_content[1])} {int(kpt_mode_content[2])} {int(kpt_mode_content[3])} {int(kpt_mode_content[4])} {int(kpt_mode_content[5])}\n"
     return lines
 
+
 def generate_kpt_manually(kpt_para_dict):
     lines = ""
-    calculate_band=False
+    calculate_band = False
     if kpt_para_dict["mode"] == "Direct":
         lines += "Direct\n"
 
@@ -79,15 +82,15 @@ def generate_kpt_manually(kpt_para_dict):
 
     elif kpt_para_dict["mode"] == "Line":
         lines += "Line\n"
-        calculate_band=True
+        calculate_band = True
     elif kpt_para_dict["mode"] == "Line_Cartesian":
         lines += "Line_Cartesian\n"
         calculate_band = True
     else:
-        KeyError(f"Invalid kpt method Key for manual method in ABACUS: {key}. It should be `Direct' and `Cartesian' for explicitly k-point, or 'Line' and 'Line_Cartesian' for band-structure calculations")
+        KeyError(f"Invalid kpt method Key for manual method in ABACUS: {kpt_para_dict['mode']}. It should be `Direct' and `Cartesian' for explicitly k-point, or 'Line' and 'Line_Cartesian' for band-structure calculations")
 
     kpt_mode_content = kpt_para_dict["content"]
-    kpt_num=int(kpt_para_dict["number_of_kpt"])
+    kpt_num = int(kpt_para_dict["number_of_kpt"])
     if calculate_band:
         if isinstance(kpt_mode_content, list):
             if len(kpt_mode_content) == kpt_num:
@@ -97,33 +100,34 @@ def generate_kpt_manually(kpt_para_dict):
             else:
                 raise ValueError(f"kpt_mode_content[\"content\"] is list and has wrong shape: {len(lat_vec)} != ele_num of {atom}:{kpt_num}.")
         elif isinstance(kpt_mode_content, np.ndarray):
-            assert kpt_mode_content.shape == (kpt_num,4), f"kpt_mode_content in ABACUS KPT file need 4 numbers and {kpt_num} lines when using method {kpt_para_dict['mode']}. Got {kpt_mode_content.shape}."
-            for content_line in kpt_mode_content:
-                lines += f"{int(content_line[0])} {int(content_line[1])} {int(content_line[2])} {int(content_line[3])}\n"
+            assert kpt_mode_content.shape == (kpt_num, 4), f"kpt_mode_content in ABACUS KPT file need 4 numbers and {kpt_num} lines when using method {kpt_para_dict['mode']}. Got {kpt_mode_content.shape}."
+            for line_idx in range(kpt_num):
+                lines += f"{kpt_mode_content[line_idx][0]} {kpt_mode_content[line_idx][1]} {kpt_mode_content[line_idx][2]} {int(kpt_mode_content[line_idx][3])}\n"
         else:
             raise TypeError(f"Except list or np.ndarray for kpt_mode_content, got {type(kpt_mode_content)} instead.")
     else:
         raise NotImplementedError("Explicitly k-point is not ready for use.")
     return lines
 
+
 if __name__ == '__main__':
     write_abacus_kpt(".",
                      kpt_para_dict={
-                             "number_of_kpt":0,
-                             "mode":"Gamma",
-                             "content":[2,2,2,0,0,0],
+                         "number_of_kpt": 0,
+                         "mode": "Gamma",
+                         "content": [2, 2, 2, 0, 0, 0],
                      })
     input()
     write_abacus_kpt(".",
                      kpt_para_dict={
-                             "number_of_kpt":6,
-                             "mode":"Line",
-                             "content":[
-                                 [0.5, 0.0, 0.5, 20],
-                                 [0.0, 0.0, 0.0, 20],
-                                 [0.5, 0.5, 0.5, 20],
-                                 [0.5, 0.25, 0.75, 20],
-                                 [0.375,0.375, 0.75,20],
-                                 [0.0, 0.0, 0.0,1]
-                             ],
+                         "number_of_kpt": 6,
+                         "mode": "Line",
+                         "content": [
+                             [0.5, 0.0, 0.5, 20],
+                             [0.0, 0.0, 0.0, 20],
+                             [0.5, 0.5, 0.5, 20],
+                             [0.5, 0.25, 0.75, 20],
+                             [0.375, 0.375, 0.75, 20],
+                             [0.0, 0.0, 0.0, 1]
+                         ],
                      })

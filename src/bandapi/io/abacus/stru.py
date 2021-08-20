@@ -9,6 +9,7 @@ import pathlib
 from collections import OrderedDict
 
 import numpy as np
+from ase.units import Angstrom, Bohr
 
 AbacusStruKeyDict = OrderedDict()
 AbacusStruKeyDict.update({
@@ -22,7 +23,7 @@ AbacusStruKeyDict.update({
         [
             "numerical_orbital_file",
         ],
-    "LATTICE_CONSTANT":  # unit:Bohr
+    "LATTICE_CONSTANT":  # unit:Bohr, but input(in this package) is Ang
         [
             "lattice_constant",
         ],
@@ -43,7 +44,7 @@ AbacusStruKeyDict.update({
 AbacusStruBlock = {'atom_type_list': 'ATOMIC_POSITIONS',
                    'coordinate_type': 'ATOMIC_POSITIONS',
                    'label_list': 'ATOMIC_SPECIES',
-                   'lattice_constant': 'LATTICE_CONSTANT',
+                   'lattice_constant': 'LATTICE_CONSTANT',  # unit: same as ase, Ang, convert to Bohr by program.
                    'lattice_matrix': 'LATTICE_VECTORS',
                    'magnetism_list': 'ATOMIC_POSITIONS',
                    'mass_list': 'ATOMIC_SPECIES',
@@ -97,7 +98,7 @@ def generate_numerical_orbital_lines(stru_para_dict):
 
 def generate_lattice_constant_lines(stru_para_dict):
     # LATTICE_CONSTANT lines
-    return f"LATTICE_CONSTANT\n{stru_para_dict['lattice_constant']}\n"
+    return f"LATTICE_CONSTANT\n{stru_para_dict['lattice_constant'] * Angstrom / Bohr}\n"
 
 
 def generate_lattice_vectors_lines(stru_para_dict):
@@ -124,6 +125,8 @@ def generate_atomic_positions_lines(stru_para_dict):
     coordinate_type = stru_para_dict["coordinate_type"]
     if coordinate_type == "Cartesian" or "Direct":
         lines += f"{coordinate_type}\n\n"
+    else:
+        raise KeyError(f"Unknown `coordinate_type`: {coordinate_type}.")
     atom_type_list = stru_para_dict["atom_type_list"]
     magnetism_list = stru_para_dict["magnetism_list"]
     number_of_atoms_list = stru_para_dict["number_of_atoms_list"]
@@ -152,21 +155,26 @@ def generate_atomic_positions_lines(stru_para_dict):
 
 if __name__ == '__main__':
     write_abacus_stru(".", {
-        "label_list": ["Si"],
-        "mass_list": ["1.000"],
-        "pseudo_file_list": ["Si.pz-vbc.UPF"],
-        "lattice_constant": 10.2, # Unit in Bohr, cif file unit is Angstrom!!!
+        "label_list": ["Si", "O"],
+        "mass_list": ["1.000", "1.000"],
+        "pseudo_file_list": ["Si.pz-vbc.UPF", "O.pz-vbc.UPF"],
+        "lattice_constant": 10.2,  # Unit in Bohr, cif file unit is Angstrom!!!
         "lattice_matrix": np.array([
             [0.5, 0.5, 0.0],
             [0.5, 0.0, 0.5],
             [0.0, 0.5, 0.5]
         ]),
         "coordinate_type": "Cartesian",
-        "atom_type_list": ["Si"],
-        "magnetism_list": [0.0],
-        "number_of_atoms_list": [2],
+        "atom_type_list": ["Si", "O"],
+        "magnetism_list": [0.0, 0],
+        "number_of_atoms_list": [2, 2],
         "pos_list": [np.array([
             [0, 0, 0, 0, 0, 0],
             [0.25, 0.25, 0.25, 1, 1, 1]
-        ])]
+        ]),
+            np.array([
+                [0, 0, 0, 0, 0, 0],
+                [0.25, 0.25, 0.25, 1, 1, 1]
+            ])
+        ]
     })
