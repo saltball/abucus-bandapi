@@ -14,7 +14,8 @@ Workflow for band-structure calculation of ABACUS.
 Install
 +++++++
 
-.. code-block:: shell
+.. code-block:: bash
+
   #git clone ....
   cd abucus-bandapi
   python setup.py develop # or install as you wish
